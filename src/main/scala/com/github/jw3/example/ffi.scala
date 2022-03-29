@@ -5,7 +5,10 @@ import jnr.ffi.{LibraryLoader, Pointer}
 trait FFI {
   def hello_from_rust(): Unit
   def create_a(): Pointer
-  def get_a_id(p: Pointer): Int
+  def a_get_id(p: Pointer): Int
+  def a_get_content(p: Pointer): String
+  def a_set_content(p: Pointer, s: String): Unit
+  def a_add_callback(p: Pointer, cb: Acallback): Unit
 }
 
 object FFI {
