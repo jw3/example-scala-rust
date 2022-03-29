@@ -1,9 +1,11 @@
 package com.github.jw3.example
 
-import jnr.ffi.LibraryLoader
+import jnr.ffi.{LibraryLoader, Pointer}
 
 trait FFI {
   def hello_from_rust(): Unit
+  def create_a(): Pointer
+  def get_a_id(p: Pointer): Int
 }
 
 object FFI {
