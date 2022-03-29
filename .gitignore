@@ -3,9 +3,3 @@ build
 target
 .local
 .bsp
-
-
-# Added by cargo
-
-/target
-Cargo.lock
