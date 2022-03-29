@@ -6,6 +6,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "example-scala-rust",
     libraryDependencies ++= Seq(
-      "com.github.jnr" % "jnr-ffi" % "2.2.11"
+      "com.github.jnr" % "jnr-ffi" % "2.2.11",
+      "com.typesafe.akka" %% "akka-actor" % "2.6.19"
     )
   )
