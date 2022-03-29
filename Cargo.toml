@@ -8,6 +8,6 @@ edition = "2021"
 [lib]
 name = "scalarust"
 path = "src/main/rust/lib.rs"
-crate-type = ["dylib"]
+crate-type = ["cdylib"]
 
 [dependencies]
