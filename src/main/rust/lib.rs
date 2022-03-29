@@ -1,6 +1,9 @@
+use std::ffi::{c_void, CStr, CString};
+use std::os::raw::{c_char, c_int};
 use std::rc::Rc;
-use std::ffi::{c_void, CString, CStr};
-use std::os::raw::{c_int, c_char};
+use std::sync::mpsc::{Receiver, Sender};
+use std::sync::{mpsc, Arc, Mutex};
+use std::time::Duration;
 
 #[no_mangle]
 pub extern "C" fn hello_from_rust() {
@@ -10,12 +13,39 @@ pub extern "C" fn hello_from_rust() {
 pub struct A {
     id: i32,
     content: String,
-    cb: Option<Callback>
+    cb: Option<Callback>,
+}
+
+pub struct B {}
+
+impl B {
+    fn new(cb: BSink) -> Self {
+        let (tx, rx) = mpsc::channel();
+        std::thread::spawn(move || {
+            let mut i = 0i64;
+            loop {
+                std::thread::sleep(Duration::from_millis(100));
+                tx.send(i);
+                i += 1;
+            }
+        });
+
+        std::thread::spawn(move || loop {
+            for i in rx.recv() {
+                cb(i)
+            }
+        });
+        Self {}
+    }
 }
 
 #[no_mangle]
 pub extern "C" fn create_a() -> *mut c_void {
-    Rc::into_raw(Rc::new(A { id: 1001, content: "default".to_string(), cb: None })) as *mut c_void
+    Rc::into_raw(Rc::new(A {
+        id: 1001,
+        content: "default".to_string(),
+        cb: None,
+    })) as *mut c_void
 }
 
 #[no_mangle]
@@ -41,7 +71,8 @@ pub extern "C" fn a_set_content(a: *mut c_void, txt: *const c_char) {
     }
 }
 
-type Callback = extern fn(*mut A);
+type Callback = extern "C" fn(*mut A);
+type BSink = extern "C" fn(i64);
 
 #[no_mangle]
 pub extern "C" fn a_add_callback(a: *mut c_void, cb: Callback) {

@@ -2,15 +2,6 @@ package com.github.jw3.example
 
 import com.github.jw3.example.FFI.ffi
 import com.github.jw3.example.model.A
-import jnr.ffi.Pointer
-import jnr.ffi.annotations.Delegate
-
-trait Acallback {
-  @Delegate def invoke(p: Pointer): Unit =
-    handle(A.make(p))
-
-  def handle(v: A): Unit
-}
 
 // Output:
 // 1) content: default

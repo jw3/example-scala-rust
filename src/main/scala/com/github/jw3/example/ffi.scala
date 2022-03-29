@@ -1,5 +1,7 @@
 package com.github.jw3.example
 
+import com.github.jw3.example.model.A
+import jnr.ffi.annotations.Delegate
 import jnr.ffi.{LibraryLoader, Pointer}
 
 trait FFI {
@@ -9,6 +11,8 @@ trait FFI {
   def a_get_content(p: Pointer): String
   def a_set_content(p: Pointer, s: String): Unit
   def a_add_callback(p: Pointer, cb: Acallback): Unit
+
+  def create_b(cb: Bcallback): Pointer
 }
 
 object FFI {
@@ -17,4 +21,18 @@ object FFI {
     loader.search("target/debug")
     loader.load("scalarust")
   }
+}
+
+trait Acallback {
+  @Delegate def invoke(p: Pointer): Unit =
+    handle(A.make(p))
+
+  def handle(v: A): Unit
+}
+
+trait Bcallback {
+  @Delegate def invoke(v: Long): Unit =
+    handle(v)
+
+  def handle(v: Long): Unit
 }
